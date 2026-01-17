@@ -392,6 +392,27 @@ mango)
     fi
     ;;
 
+zathura)
+    echo "🎨 Applying 'noctalia' theme to zathura..."
+
+    ZATHURA_INSTANCES=$(dbus-send --session \
+      --dest=org.freedesktop.DBus \
+      --type=method_call \
+      --print-reply \
+      /org/freedesktop/DBus \
+      org.freedesktop.DBus.ListNames \
+      | grep -o 'org.pwmt.zathura.PID-[0-9]*')
+
+    for id in $ZATHURA_INSTANCES; do
+      dbus-send --session \
+        --dest="$id" \
+        --type=method_call \
+        /org/pwmt/zathura \
+        org.pwmt.zathura.ExecuteCommand \
+        string:"source"
+    done
+    ;;
+
 *)
     # Handle unknown application names.
     echo "Error: Unknown application '$APP_NAME'." >&2

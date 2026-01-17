@@ -343,6 +343,18 @@ Singleton {
         }
       ],
       "postProcess": () => `${colorsApplyScript} mango`
+    },
+    {
+      "id": "zathura",
+      "name": "Zathura",
+      "category": "misc",
+      "input": "zathurarc",
+      "outputs": [
+        {
+          "path": "~/.config/zathura/noctaliarc"
+        }
+      ],
+      "postProcess": () => `${colorsApplyScript} zathura`
     }
   ]
 
