@@ -70,6 +70,7 @@
     "iRadiusRatio": 1,
     "boxRadiusRatio": 1,
     "screenRadiusRatio": 1,
+    "screenBorderRatio": 0,
     "animationSpeed": 1,
     "animationDisabled": false,
     "compactLockScreen": false,

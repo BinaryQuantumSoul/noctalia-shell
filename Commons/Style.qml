@@ -40,6 +40,7 @@ Singleton {
   readonly property int iRadiusL: Math.round(20 * Settings.data.general.iRadiusRatio)
 
   readonly property int screenRadius: Math.round(20 * Settings.data.general.screenRadiusRatio)
+  readonly property int screenBorder: Math.round(20 * Settings.data.general.screenBorderRatio)
 
   // Border
   readonly property int borderS: Math.max(1, Math.round(1 * uiScaleRatio))

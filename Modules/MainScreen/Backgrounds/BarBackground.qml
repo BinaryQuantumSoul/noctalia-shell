@@ -47,6 +47,7 @@ ShapePath {
 
   // Corner radius (from Style)
   readonly property real radius: Style.radiusL
+  readonly property real borderThickness: Settings.data.bar.floating ? 0 : Style.screenBorder
 
   // Bar position - since bar's parent fills the screen and Shape also fills the screen,
   // we can use bar.x and bar.y directly (they're already in screen coordinates)
@@ -112,6 +113,11 @@ ShapePath {
     relativeY: 0
   }
 
+  PathLine {
+    relativeX: 0
+    relativeY: borderThickness
+  }
+
   // Top-right corner arc
   PathArc {
     relativeX: root.trRadius * root.trMultX
@@ -124,7 +130,7 @@ ShapePath {
   // Right edge (moving down)
   PathLine {
     relativeX: 0
-    relativeY: root.barHeight - root.trRadius * root.trMultY - root.brRadius * root.brMultY
+    relativeY: root.barHeight - root.trRadius * root.trMultY - root.brRadius * root.brMultY - 2 * borderThickness
   }
 
   // Bottom-right corner arc

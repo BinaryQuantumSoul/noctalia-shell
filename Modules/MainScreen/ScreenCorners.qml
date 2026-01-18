@@ -16,7 +16,6 @@ Item {
   // Wrapper with layer caching to reduce GPU tessellation overhead
   Item {
     anchors.fill: parent
-
     // Cache the Shape to a texture to prevent continuous re-tessellation
     layer.enabled: true
 
@@ -31,22 +30,10 @@ Item {
         id: cornersPath
 
         // Corner configuration
-        readonly property color cornerColor: Settings.data.general.forceBlackScreenCorners ? "black" : Color.mSurface
-        readonly property real cornerRadius: Style.screenRadius
-        readonly property real cornerSize: Style.screenRadius
-
-        // Determine margins based on bar position
-        readonly property real topMargin: 0
-        readonly property real bottomMargin: 0
-        readonly property real leftMargin: 0
-        readonly property real rightMargin: 0
-
-        // Screen dimensions
-        readonly property real screenWidth: cornersShape.width
-        readonly property real screenHeight: cornersShape.height
-
-        // Only show screen corners if enabled and appropriate conditions are met
         readonly property bool shouldShow: Settings.data.general.showScreenCorners
+        readonly property color cornerColor: Settings.data.general.forceBlackScreenCorners ? "black" : Color.mSurface
+        readonly property real borderThickness: Style.screenBorder
+        readonly property real cornerRadius: Style.screenRadius
 
         // ShapePath configuration
         strokeWidth: -1 // No stroke, fill only
@@ -59,168 +46,32 @@ Item {
           }
         }
 
-        // ========== PATH DEFINITION ==========
-        // Draws 4 separate corner squares at screen edges
-        // Each corner square has a concave arc on the inner diagonal
+        // Path
+        PathSvg {
+          path: {
+            var d = ""; // svg path data
 
-        // ========== TOP-LEFT CORNER ==========
-        // Arc is at the bottom-right of this square (inner diagonal)
-        // Start at top-left screen corner
-        startX: leftMargin
-        startY: topMargin
+            var w = cornersShape.width;
+            var h = cornersShape.height;
+            var r = cornersPath.cornerRadius;
+            var b = cornersPath.borderThickness;
 
-        // Top edge (moving right)
-        PathLine {
-          relativeX: cornersPath.cornerSize
-          relativeY: 0
-        }
+            // Outer rectangle (full screen)
+            d += `M 0 0 L ${w} 0 L ${w} ${h} L 0 ${h} Z `;
+            // Inner rectangle with rounded corners (hole)
+            d += `M ${b + r} ${b} `;
+            d += `L ${w - b - r} ${b} `;
+            d += `A ${r} ${r} 0 0 1 ${w - b} ${b + r} `;
+            d += `L ${w - b} ${h - b - r} `;
+            d += `A ${r} ${r} 0 0 1 ${w - b - r} ${h - b} `;
+            d += `L ${b + r} ${h - b} `;
+            d += `A ${r} ${r} 0 0 1 ${b} ${h - b - r} `;
+            d += `L ${b} ${b + r} `;
+            d += `A ${r} ${r} 0 0 1 ${b + r} ${b} `;
+            d += `Z`;
 
-        // Right edge (moving down toward arc)
-        PathLine {
-          relativeX: 0
-          relativeY: cornersPath.cornerSize - cornersPath.cornerRadius
-        }
-
-        // Concave arc (bottom-right corner of square, curving inward toward screen center)
-        PathArc {
-          relativeX: -cornersPath.cornerRadius
-          relativeY: cornersPath.cornerRadius
-          radiusX: cornersPath.cornerRadius
-          radiusY: cornersPath.cornerRadius
-          direction: PathArc.Counterclockwise
-        }
-
-        // Bottom edge (moving left)
-        PathLine {
-          relativeX: -(cornersPath.cornerSize - cornersPath.cornerRadius)
-          relativeY: 0
-        }
-
-        // Left edge (moving up) - closes back to start
-        PathLine {
-          relativeX: 0
-          relativeY: -cornersPath.cornerSize
-        }
-
-        // ========== TOP-RIGHT CORNER ==========
-        // Arc is at the bottom-left of this square (inner diagonal)
-        PathMove {
-          x: cornersPath.screenWidth - cornersPath.rightMargin - cornersPath.cornerSize
-          y: cornersPath.topMargin
-        }
-
-        // Top edge (moving right)
-        PathLine {
-          relativeX: cornersPath.cornerSize
-          relativeY: 0
-        }
-
-        // Right edge (moving down)
-        PathLine {
-          relativeX: 0
-          relativeY: cornersPath.cornerSize
-        }
-
-        // Bottom edge (moving left toward arc)
-        PathLine {
-          relativeX: -(cornersPath.cornerSize - cornersPath.cornerRadius)
-          relativeY: 0
-        }
-
-        // Concave arc (bottom-left corner of square, curving inward toward screen center)
-        PathArc {
-          relativeX: -cornersPath.cornerRadius
-          relativeY: -cornersPath.cornerRadius
-          radiusX: cornersPath.cornerRadius
-          radiusY: cornersPath.cornerRadius
-          direction: PathArc.Counterclockwise
-        }
-
-        // Left edge (moving up) - closes back to start
-        PathLine {
-          relativeX: 0
-          relativeY: -(cornersPath.cornerSize - cornersPath.cornerRadius)
-        }
-
-        // ========== BOTTOM-LEFT CORNER ==========
-        // Arc is at the top-right of this square (inner diagonal)
-        PathMove {
-          x: cornersPath.leftMargin
-          y: cornersPath.screenHeight - cornersPath.bottomMargin - cornersPath.cornerSize
-        }
-
-        // Top edge (moving right toward arc)
-        PathLine {
-          relativeX: cornersPath.cornerSize - cornersPath.cornerRadius
-          relativeY: 0
-        }
-
-        // Concave arc (top-right corner of square, curving inward toward screen center)
-        PathArc {
-          relativeX: cornersPath.cornerRadius
-          relativeY: cornersPath.cornerRadius
-          radiusX: cornersPath.cornerRadius
-          radiusY: cornersPath.cornerRadius
-          direction: PathArc.Counterclockwise
-        }
-
-        // Right edge (moving down)
-        PathLine {
-          relativeX: 0
-          relativeY: cornersPath.cornerSize - cornersPath.cornerRadius
-        }
-
-        // Bottom edge (moving left)
-        PathLine {
-          relativeX: -cornersPath.cornerSize
-          relativeY: 0
-        }
-
-        // Left edge (moving up) - closes back to start
-        PathLine {
-          relativeX: 0
-          relativeY: -cornersPath.cornerSize
-        }
-
-        // ========== BOTTOM-RIGHT CORNER ==========
-        // Arc is at the top-left of this square (inner diagonal)
-        // Start at bottom-right of square (different from other corners!)
-        PathMove {
-          x: cornersPath.screenWidth - cornersPath.rightMargin
-          y: cornersPath.screenHeight - cornersPath.bottomMargin
-        }
-
-        // Bottom edge (moving left)
-        PathLine {
-          relativeX: -cornersPath.cornerSize
-          relativeY: 0
-        }
-
-        // Left edge (moving up toward arc)
-        PathLine {
-          relativeX: 0
-          relativeY: -(cornersPath.cornerSize - cornersPath.cornerRadius)
-        }
-
-        // Concave arc (top-left corner of square, curving inward toward screen center)
-        PathArc {
-          relativeX: cornersPath.cornerRadius
-          relativeY: -cornersPath.cornerRadius
-          radiusX: cornersPath.cornerRadius
-          radiusY: cornersPath.cornerRadius
-          direction: PathArc.Counterclockwise
-        }
-
-        // Top edge (moving right)
-        PathLine {
-          relativeX: cornersPath.cornerSize - cornersPath.cornerRadius
-          relativeY: 0
-        }
-
-        // Right edge (moving down) - closes back to start
-        PathLine {
-          relativeX: 0
-          relativeY: cornersPath.cornerSize
+            return d;
+          }
         }
       }
     }

@@ -257,6 +257,7 @@ Singleton {
       property real iRadiusRatio: 1.0
       property real boxRadiusRatio: 1.0
       property real screenRadiusRatio: 1.0
+      property real screenBorderRatio: 0.0
       property real animationSpeed: 1.0
       property bool animationDisabled: false
       property bool compactLockScreen: false

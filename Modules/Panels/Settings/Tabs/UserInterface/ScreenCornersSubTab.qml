@@ -60,5 +60,37 @@ ColumnLayout {
         }
       }
     }
+
+    RowLayout {
+      spacing: Style.marginL
+      Layout.fillWidth: true
+
+      NValueSlider {
+        Layout.fillWidth: true
+        label: I18n.tr("panels.general.screen-border-thickness-label")
+        description: I18n.tr("panels.general.screen-border-thickness-description")
+        from: 0
+        to: 2
+        stepSize: 0.01
+        value: Settings.data.general.screenBorderRatio
+        defaultValue: Settings.getDefaultValue("general.screenBorderRatio")
+        onMoved: value => Settings.data.general.screenBorderRatio = value
+        text: Math.floor(Settings.data.general.screenBorderRatio * 100) + "%"
+      }
+
+      Item {
+        Layout.preferredWidth: 30 * Style.uiScaleRatio
+        Layout.preferredHeight: 30 * Style.uiScaleRatio
+
+        NIconButton {
+          icon: "restore"
+          baseSize: Style.baseWidgetSize * 0.8
+          tooltipText: I18n.tr("panels.general.screen-border-thickness-reset")
+          onClicked: Settings.data.general.screenBorderRatio = 1.0
+          anchors.right: parent.right
+          anchors.verticalCenter: parent.verticalCenter
+        }
+      }
+    }
   }
 }
